@@ -1,0 +1,29 @@
+services:
+  mariadb:
+    image: mariadb:11
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpass
+      MYSQL_DATABASE: todo_db
+      MYSQL_USER: todo_user
+      MYSQL_PASSWORD: todopass
+    ports:
+      - "3306:3306"
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    command: ["npm", "run", "dev", "--", "--host","0.0.0.0"]
+
+  backend:
+    build: ./backend
+    depends_on:
+      - mariadb
+    environment:
+      DB_HOST: mariadb
+      DB_PORT: 3306
+      DB_NAME: todo_db
+      DB_USER: todo_user
+      DB_PASSWORD: todopass
+    ports:
+      - "8000:8000"
