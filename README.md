@@ -7,7 +7,7 @@
 
 ```bash
 docker compose up -d --build
-
+```
 
 
 ## 백엔드 안뜰때
