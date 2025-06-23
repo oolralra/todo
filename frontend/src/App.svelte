@@ -73,7 +73,7 @@
   }
 </style>
 
-<h1>할 일 목록</h1>
+<h1>fastapi 할 일 목록</h1>
 
 <div class="todo-input">
   <input bind:value={newTitle} placeholder="할 일 입력" />
