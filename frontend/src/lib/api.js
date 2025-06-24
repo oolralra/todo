@@ -1,4 +1,4 @@
-const BASE_URL = "http://192.168.75.93:8000";
+const BASE_URL = "http://backend:8000";
 
 export async function getTodos() {
   const res = await fetch(`${BASE_URL}/todos`);
