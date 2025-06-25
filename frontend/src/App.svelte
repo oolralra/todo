@@ -1,3 +1,4 @@
+
 <script>
   import { onMount } from 'svelte';
   import { getTodos, addTodo } from './lib/api.js';
@@ -5,16 +6,59 @@
   let todos = [];
   let newTitle = '';
 
-  onMount(async () => {
-    todos = await getTodos();
-  });
+  let email = '';
+  let password = '';
+  let token = '';
+  let error = '';
+
+  async function handleLogin() {
+    try {
+      const res = await fetch('http://localhost:8000/auth/login', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      if (!res.ok) {
+        throw new Error('로그인 실패');
+      }
+
+      const data = await res.json();
+      token = data.access_token;
+      localStorage.setItem('token', token);
+      error = '';
+      await loadTodos();
+    } catch (err) {
+      error = err.message;
+    }
+  }
+
+  async function loadTodos() {
+    const storedToken = localStorage.getItem('token');
+    if (!storedToken) return;
+    const res = await fetch('http://localhost:8000/todos', {
+      headers: { Authorization: 'Bearer ' + storedToken }
+    });
+    todos = await res.json();
+  }
 
   async function handleAdd() {
     if (!newTitle.trim()) return;
-    const todo = await addTodo(newTitle);
+    const storedToken = localStorage.getItem('token');
+    const res = await fetch('http://localhost:8000/todos', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer ' + storedToken
+      },
+      body: JSON.stringify({ title: newTitle })
+    });
+    const todo = await res.json();
     todos = [...todos, todo];
     newTitle = '';
   }
+
+  onMount(loadTodos);
 </script>
 
 <style>
@@ -24,65 +68,39 @@
     margin: 0;
     padding: 2rem;
   }
-
-  h1 {
-    font-size: 2rem;
-    color: #333;
-  }
-
-  .todo-input {
-    margin-top: 1rem;
-    display: flex;
-    gap: 0.5rem;
-  }
-
   input {
-    flex: 1;
+    margin-bottom: 0.5rem;
     padding: 0.5rem;
     font-size: 1rem;
+    width: 100%;
+    max-width: 300px;
     border: 1px solid #ccc;
-    border-radius: 6px;
+    border-radius: 4px;
   }
-
   button {
+    margin-bottom: 1rem;
     padding: 0.5rem 1rem;
-    font-size: 1rem;
-    background-color: #4caf50;
-    color: white;
-    border: none;
-    border-radius: 6px;
-    cursor: pointer;
   }
-
-  button:hover {
-    background-color: #45a049;
-  }
-
-  ul {
-    margin-top: 1.5rem;
-    padding: 0;
-    list-style: none;
-  }
-
-  li {
-    background: white;
-    padding: 0.75rem;
-    margin-bottom: 0.5rem;
-    border-radius: 6px;
-    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  .error {
+    color: red;
   }
 </style>
 
-<h1>fastapi 할 일 목록</h1>
+<h1>로그인</h1>
+<input placeholder="Email" bind:value={email} />
+<input type="password" placeholder="Password" bind:value={password} />
+<button on:click={handleLogin}>로그인</button>
+{#if error}
+  <div class="error">{error}</div>
+{/if}
 
+<h2>Todo</h2>
 <div class="todo-input">
-  <input bind:value={newTitle} placeholder="할 일 입력" />
+  <input bind:value={newTitle} placeholder="새 할 일" />
   <button on:click={handleAdd}>추가</button>
 </div>
-
 <ul>
   {#each todos as todo}
-    <li>{todo.title} {todo.completed ? '✅' : ''}</li>
+    <li>{todo.title}</li>
   {/each}
 </ul>
-
