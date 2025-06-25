@@ -8,7 +8,7 @@ class LoginRequest(BaseModel):
     username: str
     password: str
 
-# 임시 유저 (테스트용)
+# 임시 유저 (테스트용
 fake_user = {
     "username": "testuser",
     "password": "secret123"
