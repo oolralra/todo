@@ -14,12 +14,14 @@ fake_user = {
     "password": "secret123"
 }
 
+# auth.py
 @router.post("/login")
 def login(request: LoginRequest):
     if request.username != fake_user["username"] or request.password != fake_user["password"]:
         raise HTTPException(status_code=401, detail="Invalid credentials")
+    # 간단한 예시 토큰 반환
     return {
-        "message": "Login successful",
-        "username": request.username
+        "access_token": "test-token",
+        "token_type": "bearer"
     }
 
