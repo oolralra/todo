@@ -1,6 +1,6 @@
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
-from routers import todo,auth  # ← 이게 반드시 있어야 함
+from routers import todo,auth,board  # ← 이게 반드시 있어야 함
 from database import Base, engine
 import models
 
@@ -18,6 +18,9 @@ app.add_middleware(
 
 app.include_router(todo.router, tags=["todos"])
 app.include_router(auth.router)
+app.include_router(board.router)
+
+
 @app.get("/")
 def root():
     return {"message": "Hello from FastAPI"}

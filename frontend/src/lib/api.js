@@ -13,3 +13,17 @@ export async function addTodo(title) {
   });
   return await res.json();
 }
+
+export async function getPosts() {
+  const res = await fetch(`${BASE_URL}/posts/`);
+  return await res.json();
+}
+
+export async function createPost(post) {
+  const res = await fetch(`${BASE_URL}/posts/`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(post)
+  });
+  return await res.json();
+}

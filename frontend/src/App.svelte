@@ -1,5 +1,6 @@
 <script>
   import { onMount } from 'svelte';
+  import Board from './Board.svelte';
 
   let todos = [];
   let newTitle = '';
@@ -106,4 +107,6 @@
       <li>{todo.title}</li>
     {/each}
   </ul>
+  <!-- ✅ 게시판 삽입 -->
+  <Board />
 {/if}
