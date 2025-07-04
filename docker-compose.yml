@@ -15,15 +15,14 @@ services:
     restart: always
     ports:
       - "27017:27017"
-      
-  frontend:
-    build: ./frontend
-    ports:
-      - "5173:5173"
-    command: ["npm", "run", "dev", "--", "--host","0.0.0.0"]
 
-  backend:
-    build: ./backend
+  auth:
+    build: ./backend/auth
+    ports:
+      - "8001:8000"
+
+  todo:
+    build: ./backend/todo
     depends_on:
       - mariadb
     environment:
@@ -33,4 +32,17 @@ services:
       DB_USER: todo_user
       DB_PASSWORD: todopass
     ports:
-      - "8000:8000"
+      - "8002:8000"
+
+  board:
+    build: ./backend/board
+    depends_on:
+      - mongo
+    ports:
+      - "8003:8000"
+
+  frontend:
+    build: ./frontend
+    ports:
+      - "5173:5173"
+    command: ["npm", "run", "dev", "--", "--host", "0.0.0.0"]
